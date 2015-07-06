@@ -152,10 +152,33 @@
         else return {};
       })(this.constituency);
     },
-    counties = {};
+    counties = {},
+    $result = $('#map-result');
   $svg.each(function() {
     var c = new County(this);
     counties[c.name] = c;
+    this.countyData = c;
+  }).on("click", function() {
+    var county = this.countyData;
+    if (county){
+      var mepresult = "<h2>Your MEPs in "+ county.name+"</h2><h3>Ireland - "+ county.constituency+"</h3>";
+      if (county.meps){
+        for (var mep in county.meps){
+          var m = county.meps[mep];
+          mepresult += "<div data-mep='"+mep+"'><h4>"+mep+"</h4><dl>";
+          if (m.ttipPosition) mepresult += "<dt>Position on TTIP</dt><dd>"+m.ttipPosition+"</dd>";
+          mepresult += "</dl></div>";
+        }
+      }
+      else{
+        mepresult += "There were no MEPs found in your area. This may be an error.";
+      }
+      $result.html(mepresult);
+    }
+    else{
+      $result.html("");
+    }
+
   });
   window.$svg = $svg;
   window.counties = counties;
